@@ -1,9 +1,22 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_mail import Mail, Message
 import psycopg2
+import random
 
 app = Flask(__name__)
 CORS(app)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'nektslider@gmail.com'
+app.config['MAIL_PASSWORD'] = 'eatz ktre ypzi ahlr'
+app.config['MAIL_DEFAULT_SENDER'] = 'nektslider@gmail.com'
+
+mail = Mail(app)
+
+pending_registrations = {}
 
 conn = psycopg2.connect(
     host="localhost",
@@ -13,21 +26,53 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/send_code', methods=['POST'])
+def send_code():
     data = request.json
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
     email = data.get('email')
-    password = data.get('password')
-    height = data.get('height') or 0
-    weight = data.get('weight') or 0
+    if not email:
+        return jsonify({"status": "error", "message": "Email не указан"}), 400
+    code = str(random.randint(1000, 9999))
+    pending_registrations[email] = {"code": code, "data": data}
+    print(f"Код: {code} для {email}")
+    try:
+        msg = Message(
+            subject="Код подтверждения GymApp",
+            recipients=[email],
+            body=f"Ваш код подтверждения: {code}"
+        )
+        mail.send(msg)
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/verify_code', methods=['POST'])
+def verify_code():
+    data = request.json
+    print(f"Получили данные: {data}")
+    email = data.get('email')
+    code = data.get('code')
+    print(f"Проверяем: email={email}, code={code}")
+    print(f"Сохранённые коды: {pending_registrations}")
+    if email not in pending_registrations:
+        return jsonify({"status": "error", "message": "Код не найден"}), 400
+    saved = pending_registrations[email]
+    print(f"Сохранённый код: {saved['code']}")
+    if saved["code"] != code:
+        return jsonify({"status": "error", "message": "Неверный код"}), 400
+    reg = saved["data"]
+    first_name = reg.get('first_name')
+    last_name = reg.get('last_name')
+    password = reg.get('password')
+    height = reg.get('height') or 0
+    weight = reg.get('weight') or 0
     try:
         cursor.execute(
             "INSERT INTO users (first_name,last_name,email,password,height,weight) VALUES (%s,%s,%s,%s,%s,%s)",
             (first_name, last_name, email, password, height, weight)
         )
         conn.commit()
+        del pending_registrations[email]
         return jsonify({"status": "success"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
@@ -130,7 +175,8 @@ def save_custom_workout():
         )
         custom_workout_id = cursor.fetchone()[0]
         for ex in exercises:
-            cursor.execute("INSERT INTO custom_workout_exercises (custom_workout_id, exercise_id, sets, reps) VALUES (%s, %s, %s, %s)",
+            cursor.execute(
+                "INSERT INTO custom_workout_exercises (custom_workout_id, exercise_id, sets, reps) VALUES (%s, %s, %s, %s)",
                 (custom_workout_id, ex['exercise_id'], ex['sets'], ex['reps'])
             )
         conn.commit()
