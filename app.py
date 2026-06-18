@@ -255,4 +255,5 @@ def download_apk():
     return send_from_directory(apk_dir, 'app-debug.apk', as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=1234, debug=True)
+    port = int(os.environ.get("PORT", 1234))
+    app.run(host="0.0.0.0", port=port, debug=False)
