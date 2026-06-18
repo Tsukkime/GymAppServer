@@ -255,6 +255,73 @@ def get_custom_workout_exercises():
         })
     return jsonify({"status": "success", "exercises": result}), 200
 
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+
+def get_user_from_token(token):
+    cursor.execute(
+        "SELECT u.id FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.token = %s",
+        (token,)
+    )
+    row = cursor.fetchone()
+    return row[0] if row else None
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = get_user_from_token(token)
+    if not user_id:
+        return jsonify({"status": "error", "message": "Нет доступа"}), 401
+
+    data = request.get_json(force=True, silent=True) or {}
+    user_message = data.get('message', '')
+    if not user_message:
+        return jsonify({"status": "error", "message": "Нет сообщения"}), 400
+
+    cursor.execute(
+        "INSERT INTO messages (user_id, role, content) VALUES (%s, %s, %s)",
+        (user_id, 'user', user_message)
+    )
+    conn.commit()
+
+    cursor.execute(
+        "SELECT role, content FROM messages WHERE user_id = %s ORDER BY created_at ASC",
+        (user_id,)
+    )
+    history = [{"role": row[0], "content": row[1]} for row in cursor.fetchall()]
+
+    messages = [{"role": "system", "content": "Ты фитнес-тренер и диетолог. Отвечай на русском языке. Давай советы по питанию, упражнениям и здоровому образу жизни. Отвечай кратко и по делу."}] + history
+
+    try:
+        resp = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            json={"model": "openrouter/auto", "messages": messages},
+            timeout=30
+        )
+        ai_message = resp.json()["choices"][0]["message"]["content"]
+        cursor.execute(
+            "INSERT INTO messages (user_id, role, content) VALUES (%s, %s, %s)",
+            (user_id, 'assistant', ai_message)
+        )
+        conn.commit()
+        return jsonify({"status": "success", "message": ai_message}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/chat/history', methods=['GET'])
+def chat_history():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = get_user_from_token(token)
+    if not user_id:
+        return jsonify({"status": "error", "message": "Нет доступа"}), 401
+
+    cursor.execute(
+        "SELECT role, content FROM messages WHERE user_id = %s ORDER BY created_at ASC",
+        (user_id,)
+    )
+    history = [{"role": row[0], "content": row[1]} for row in cursor.fetchall()]
+    return jsonify({"status": "success", "messages": history}), 200
+
 @app.route('/')
 def index():
     return render_template('index.html')
