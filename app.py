@@ -329,7 +329,9 @@ def index():
 @app.route('/download')
 def download_apk():
     apk_dir = os.path.join(os.path.dirname(__file__), 'static')
-    return send_from_directory(apk_dir, 'app-debug.apk', as_attachment=True)
+    response = send_from_directory(apk_dir, 'app-debug.apk', as_attachment=True, mimetype='application/vnd.android.package-archive')
+    response.headers['Content-Disposition'] = 'attachment; filename="GymApp.apk"'
+    return response
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 1234))
