@@ -41,7 +41,8 @@ cursor = conn.cursor()
 
 @app.route('/send_code', methods=['POST'])
 def send_code():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
+    print(f"send_code data: {data}")
     email = data.get('email')
     if not email:
         return jsonify({"status": "error", "message": "Email не указан"}), 400
@@ -61,7 +62,7 @@ def send_code():
 
 @app.route('/verify_code', methods=['POST'])
 def verify_code():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     print(f"Получили данные: {data}")
     email = data.get('email')
     code = data.get('code')
@@ -92,7 +93,7 @@ def verify_code():
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     email = data.get('email')
     password = data.get('password')
     cursor.execute(
@@ -114,7 +115,7 @@ def login():
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     user_id = data.get('id')
     height = data.get('height')
     weight = data.get('weight')
