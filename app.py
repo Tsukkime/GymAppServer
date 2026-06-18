@@ -4,6 +4,7 @@ import psycopg2
 import random
 import os
 import requests
+import secrets
 from urllib.parse import urlparse
 
 app = Flask(__name__)
@@ -99,6 +100,34 @@ def login():
     )
     user = cursor.fetchone()
     if user:
+        token = secrets.token_hex(32)
+        cursor.execute("INSERT INTO sessions (user_id, token) VALUES (%s, %s)", (user[0], token))
+        conn.commit()
+        return jsonify({
+            "status": "success",
+            "token": token,
+            "id": user[0],
+            "first_name": user[1],
+            "last_name": user[2],
+            "height": user[3],
+            "weight": user[4]
+        }), 200
+    else:
+        return jsonify({"status": "error", "message": "Неверный email или пароль"}), 401
+
+@app.route('/me', methods=['GET'])
+def me():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    if not token:
+        return jsonify({"status": "error", "message": "Нет токена"}), 401
+    cursor.execute(
+        """SELECT u.id, u.first_name, u.last_name, u.height, u.weight
+           FROM sessions s JOIN users u ON s.user_id = u.id
+           WHERE s.token = %s""",
+        (token,)
+    )
+    user = cursor.fetchone()
+    if user:
         return jsonify({
             "status": "success",
             "id": user[0],
@@ -108,7 +137,7 @@ def login():
             "weight": user[4]
         }), 200
     else:
-        return jsonify({"status": "error", "message": "Неверный email или пароль"}), 401
+        return jsonify({"status": "error", "message": "Неверный токен"}), 401
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
