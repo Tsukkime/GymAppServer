@@ -3,138 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GymApp — Твой персональный тренер</title>
+    <title>GymApp — Тренируйся умнее</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --red: #e63946;
+            --red-dim: rgba(230,57,70,0.15);
+            --bg: #080808;
+            --surface: #111111;
+            --border: #1e1e1e;
+            --text: #ffffff;
+            --muted: #555;
+            --sub: #888;
+        }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0f0f0f;
-            color: #fff;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .hero {
-            min-height: auto;
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 64px;
+            background: rgba(8,8,8,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .nav-logo span { color: var(--red); }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--sub);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--red);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .nav-cta:hover { opacity: 0.85; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 80px 20px 60px;
-            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f0f 70%);
+            padding: 120px 20px 80px;
             position: relative;
+            overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
+        .hero-bg {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            pointer-events: none;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(230,57,70,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 60%, rgba(230,57,70,0.06) 0%, transparent 60%);
         }
 
-        .logo {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: #e63946;
-            margin-bottom: 60px;
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+            opacity: 0.4;
+        }
+
+        .hero-inner {
+            position: relative;
+            text-align: center;
+            max-width: 780px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--red-dim);
+            border: 1px solid rgba(230,57,70,0.3);
+            color: var(--red);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            letter-spacing: 0.3px;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(2.8rem, 8vw, 5.5rem);
             font-weight: 900;
-            line-height: 1.1;
+            line-height: 1.05;
+            letter-spacing: -2px;
             margin-bottom: 24px;
         }
 
-        .hero h1 span { color: #e63946; }
-
-        .hero p {
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: #aaa;
-            max-width: 560px;
-            line-height: 1.7;
-            margin-bottom: 48px;
+        .hero h1 em {
+            font-style: normal;
+            color: var(--red);
         }
 
-        .btn-download {
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--sub);
+            line-height: 1.7;
+            max-width: 520px;
+            margin: 0 auto 48px;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            background: #e63946;
+            gap: 10px;
+            background: var(--red);
             color: #fff;
             text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            padding: 16px 36px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.2px;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 8px 32px rgba(230, 57, 70, 0.4);
+            box-shadow: 0 4px 24px rgba(230,57,70,0.35);
         }
 
-        .btn-download:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 48px rgba(230, 57, 70, 0.6);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(230,57,70,0.5);
         }
 
-        .btn-download svg { width: 22px; height: 22px; fill: #fff; }
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--sub);
+            text-decoration: none;
+            padding: 16px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            transition: color 0.2s, border-color 0.2s;
+        }
 
-        .badge { margin-top: 20px; font-size: 0.85rem; color: #555; }
+        .btn-ghost:hover { color: #fff; border-color: #444; }
+
+        .hero-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        /* PHONE MOCKUP */
+        .mockup-section {
+            padding: 40px 20px 100px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 260px;
+            height: 520px;
+            background: #111;
+            border-radius: 40px;
+            border: 2px solid #2a2a2a;
+            box-shadow:
+                0 0 0 1px #1a1a1a,
+                0 40px 80px rgba(0,0,0,0.8),
+                0 0 60px rgba(230,57,70,0.08);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-notch {
+            width: 80px;
+            height: 24px;
+            background: #080808;
+            border-radius: 0 0 16px 16px;
+            margin: 0 auto;
+            flex-shrink: 0;
+        }
+
+        .phone-screen {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .ph-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .ph-sub {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .ph-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ph-card-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--red);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .ph-card-text { font-size: 12px; font-weight: 600; color: #fff; }
+        .ph-card-sub { font-size: 10px; color: #666; margin-top: 2px; }
+
+        .ph-nav {
+            height: 48px;
+            background: #141414;
+            border-top: 1px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-shrink: 0;
+        }
+
+        .ph-nav-item { font-size: 18px; }
 
         /* FEATURES */
         .features {
             padding: 100px 20px;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .section-title {
-            text-align: center;
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
-            font-weight: 800;
+        .label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--red);
             margin-bottom: 16px;
         }
 
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
         .section-sub {
-            text-align: center;
-            color: #666;
-            margin-bottom: 64px;
+            color: var(--sub);
             font-size: 1rem;
+            line-height: 1.7;
+            max-width: 500px;
+            margin-bottom: 64px;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
         }
 
         .card {
-            background: #161616;
-            border: 1px solid #222;
-            border-radius: 20px;
-            padding: 36px 28px;
-            transition: border-color 0.3s, transform 0.3s;
+            background: var(--surface);
+            padding: 32px 28px;
+            transition: background 0.2s;
         }
 
-        .card:hover {
-            border-color: #e63946;
-            transform: translateY(-4px);
+        .card:hover { background: #161616; }
+
+        .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            display: block;
         }
 
-        .card-icon { font-size: 2.5rem; margin-bottom: 20px; }
-        .card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; }
-        .card p { color: #777; line-height: 1.7; font-size: 0.95rem; }
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card p {
+            color: var(--sub);
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
 
         /* STATS */
         .stats {
-            background: #161616;
-            border-top: 1px solid #222;
-            border-bottom: 1px solid #222;
-            padding: 60px 20px;
+            padding: 80px 20px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         .stats-inner {
@@ -146,87 +387,221 @@
             text-align: center;
         }
 
-        .stat-number { font-size: 3rem; font-weight: 900; color: #e63946; }
-        .stat-label { color: #666; margin-top: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: -2px;
+            line-height: 1;
+        }
 
-        footer {
+        .stat-label {
+            color: var(--muted);
+            margin-top: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            padding: 100px 20px;
             text-align: center;
-            padding: 30px 20px;
-            color: #333;
-            font-size: 0.85rem;
-            border-top: 1px solid #1a1a1a;
+        }
+
+        .cta-box {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--red), transparent);
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 14px;
+        }
+
+        .cta-box p {
+            color: var(--sub);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .footer-logo span { color: var(--red); }
+
+        footer p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* SCROLL ANIMATION */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
+            footer { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-<section class="hero">
-    <div class="logo">GymApp</div>
-    <h1>Тренируйся<br><span>умнее</span></h1>
-    <p>Готовые программы для дома и зала, конструктор своих тренировок, ИИ-тренер и контроль физической формы — всё в одном приложении.</p>
-    <a class="btn-download" href="/download">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/>
-        </svg>
-        Скачать для Android
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">Gym<span>App</span></div>
+    <ul class="nav-links">
+        <li><a href="#features">Возможности</a></li>
+        <li><a href="#stats">О приложении</a></li>
+    </ul>
+    <a class="nav-cta" href="/download">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/></svg>
+        Скачать APK
     </a>
-    <div class="badge">APK · Android 8.0+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-inner">
+        <div class="hero-badge">🔥 Android приложение · Бесплатно</div>
+        <h1>Тренируйся<br><em>умнее</em></h1>
+        <p class="hero-sub">Готовые программы, конструктор тренировок, ИИ-тренер и контроль физической формы — всё в одном приложении.</p>
+        <div class="hero-actions">
+            <a class="btn-primary" href="/download">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/></svg>
+                Скачать для Android
+            </a>
+            <a class="btn-ghost" href="#features">Узнать больше →</a>
+        </div>
+        <p class="hero-note">APK · Android 8.0+ · Без магазина приложений</p>
+    </div>
 </section>
 
-<section class="features">
-    <h2 class="section-title">Всё что нужно для прогресса</h2>
-    <p class="section-sub">Никаких лишних кнопок — только тренировки</p>
-    <div class="cards">
+<!-- PHONE MOCKUP -->
+<div class="mockup-section fade-up">
+    <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+            <div class="ph-title">Добро пожаловать,</div>
+            <div class="ph-sub">Сегодня день тренировки 💪</div>
+            <div class="ph-card">
+                <div class="ph-card-icon">🏋️</div>
+                <div>
+                    <div class="ph-card-text">Тренировки</div>
+                    <div class="ph-card-sub">Дома · В зале · Свои</div>
+                </div>
+            </div>
+            <div class="ph-card">
+                <div class="ph-card-icon">🤖</div>
+                <div>
+                    <div class="ph-card-text">ИИ-тренер</div>
+                    <div class="ph-card-sub">Советы по питанию и форме</div>
+                </div>
+            </div>
+            <div class="ph-card">
+                <div class="ph-card-icon">📊</div>
+                <div>
+                    <div class="ph-card-text">Мой профиль</div>
+                    <div class="ph-card-sub">ИМТ · Рост · Вес</div>
+                </div>
+            </div>
+        </div>
+        <div class="ph-nav">
+            <div class="ph-nav-item">🏠</div>
+            <div class="ph-nav-item">🏋️</div>
+            <div class="ph-nav-item">🤖</div>
+            <div class="ph-nav-item">👤</div>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+    <div class="fade-up">
+        <span class="label">Возможности</span>
+        <h2 class="section-title">Всё что нужно<br>для прогресса</h2>
+        <p class="section-sub">Никакого лишнего — только то, что реально помогает тренироваться.</p>
+    </div>
+    <div class="cards fade-up">
         <div class="card">
-            <div class="card-icon">🏠</div>
+            <span class="card-icon">🏠</span>
             <h3>Тренировки дома</h3>
-            <p>Готовые программы без инвентаря. Качайся где угодно — дома, в парке, в командировке.</p>
+            <p>Готовые программы без инвентаря. Тренируйся где угодно — дома, в парке, в командировке.</p>
         </div>
         <div class="card">
-            <div class="card-icon">🏋️</div>
+            <span class="card-icon">🏋️</span>
             <h3>Тренировки в зале</h3>
             <p>Профессиональные программы с тренажёрами и свободными весами для максимального результата.</p>
         </div>
         <div class="card">
-            <div class="card-icon">🏃</div>
-            <h3>Кардио</h3>
-            <p>Программы для выносливости и сжигания жира — бег, прыжки, интервальные тренировки.</p>
-        </div>
-        <div class="card">
-            <div class="card-icon">🧘</div>
-            <h3>Растяжка и гибкость</h3>
-            <p>Комплексы для восстановления мышц, улучшения гибкости и снятия напряжения после тренировок.</p>
-        </div>
-        <div class="card">
-            <div class="card-icon">✏️</div>
+            <span class="card-icon">⚡</span>
             <h3>Свои тренировки</h3>
             <p>Составляй собственные программы из базы упражнений. Задавай подходы и повторения под себя.</p>
         </div>
         <div class="card">
-            <div class="card-icon">🤖</div>
+            <span class="card-icon">🤖</span>
             <h3>ИИ-тренер</h3>
-            <p>Задай вопрос про питание или упражнения — ИИ помнит всю вашу переписку и даёт персональные советы.</p>
+            <p>Задай вопрос про питание или технику — ИИ помнит всю переписку и даёт персональные советы.</p>
         </div>
         <div class="card">
-            <div class="card-icon">📊</div>
+            <span class="card-icon">📊</span>
             <h3>Контроль формы</h3>
-            <p>Введи рост и вес — приложение рассчитает ИМТ и подскажет твою категорию.</p>
+            <p>Введи рост и вес — приложение рассчитает ИМТ и покажет твою физическую категорию.</p>
         </div>
         <div class="card">
-            <div class="card-icon">💡</div>
-            <h3>Советы к упражнениям</h3>
-            <p>Каждое упражнение содержит подсказку по технике — меньше травм, больше прогресса.</p>
-        </div>
-        <div class="card">
-            <div class="card-icon">🔐</div>
+            <span class="card-icon">🔐</span>
             <h3>Личный аккаунт</h3>
-            <p>Регистрация с подтверждением на email. Данные и тренировки сохраняются в облаке.</p>
+            <p>Регистрация через email с подтверждением. Данные хранятся в облаке — вход на любом устройстве.</p>
         </div>
     </div>
 </section>
 
-<section class="stats">
-    <div class="stats-inner">
+<!-- STATS -->
+<section class="stats" id="stats">
+    <div class="stats-inner fade-up">
         <div>
             <div class="stat-number">4</div>
             <div class="stat-label">Вида тренировок</div>
@@ -242,9 +617,30 @@
     </div>
 </section>
 
+<!-- CTA -->
+<section class="cta-section">
+    <div class="cta-box fade-up">
+        <h2>Начни тренироваться сегодня</h2>
+        <p>Скачай приложение бесплатно. Установка займёт меньше минуты.</p>
+        <a class="btn-primary" href="/download">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/></svg>
+            Скачать для Android
+        </a>
+    </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-    © 2025 GymApp. Сделано с ❤️
+    <div class="footer-logo">Gym<span>App</span></div>
+    <p>© 2025 GymApp. Дипломный проект.</p>
 </footer>
+
+<script>
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
