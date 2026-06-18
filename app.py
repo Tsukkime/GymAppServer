@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 import psycopg2
 import random
 import os
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 CORS(app)
@@ -19,12 +20,23 @@ mail = Mail(app)
 
 pending_registrations = {}
 
-conn = psycopg2.connect(
-    host="localhost",
-    database="Gym",
-    user="postgres",
-    password="postgres"
-)
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    parsed = urlparse(database_url)
+    conn = psycopg2.connect(
+        host=parsed.hostname,
+        port=parsed.port,
+        database=parsed.path.lstrip("/"),
+        user=parsed.username,
+        password=parsed.password
+    )
+else:
+    conn = psycopg2.connect(
+        host="localhost",
+        database="Gym",
+        user="postgres",
+        password="postgres"
+    )
 cursor = conn.cursor()
 
 @app.route('/send_code', methods=['POST'])
