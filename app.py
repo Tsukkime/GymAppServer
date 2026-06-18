@@ -1,24 +1,24 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
-from flask_mail import Mail, Message
 import psycopg2
 import random
 import os
+import requests
 from urllib.parse import urlparse
 
 app = Flask(__name__)
 CORS(app)
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'nektslider@gmail.com'
-app.config['MAIL_PASSWORD'] = 'eatz ktre ypzi ahlr'
-app.config['MAIL_DEFAULT_SENDER'] = 'nektslider@gmail.com'
-app.config['MAIL_TIMEOUT'] = 10
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "re_ZkoX79sG_3EyeCkkMGihPJti87SsPXyBT")
+RESEND_FROM = "GymApp <noreply@webcheating.xyz>"
 
-mail = Mail(app)
+def send_email(to_email, subject, body):
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={"Authorization": f"Bearer {RESEND_API_KEY}"},
+        json={"from": RESEND_FROM, "to": [to_email], "subject": subject, "text": body}
+    )
+    return response.status_code == 200
 
 pending_registrations = {}
 
@@ -51,16 +51,11 @@ def send_code():
     code = str(random.randint(1000, 9999))
     pending_registrations[email] = {"code": code, "data": data}
     print(f"Код: {code} для {email}")
-    try:
-        msg = Message(
-            subject="Код подтверждения GymApp",
-            recipients=[email],
-            body=f"Ваш код подтверждения: {code}"
-        )
-        mail.send(msg)
+    ok = send_email(email, "Код подтверждения GymApp", f"Ваш код подтверждения: {code}")
+    if ok:
         return jsonify({"status": "success"}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+    else:
+        return jsonify({"status": "error", "message": "Ошибка отправки email"}), 400
 
 @app.route('/verify_code', methods=['POST'])
 def verify_code():
@@ -135,11 +130,7 @@ def get_workouts():
     rows = cursor.fetchall()
     result = []
     for row in rows:
-        result.append({
-            "id": row[0],
-            "title": row[1],
-            "subtitle": row[2]
-        })
+        result.append({"id": row[0], "title": row[1], "subtitle": row[2]})
     return jsonify({"status": "success", "workouts": result}), 200
 
 @app.route('/exercises', methods=['GET'])
@@ -157,11 +148,7 @@ def get_exercises():
     rows = cursor.fetchall()
     result = []
     for row in rows:
-        result.append({
-            "name": row[0],
-            "sets": row[1],
-            "tip": row[2]
-        })
+        result.append({"name": row[0], "sets": row[1], "tip": row[2]})
     return jsonify({"status": "success", "exercises": result}), 200
 
 @app.route('/all_exercises', methods=['GET'])
@@ -170,17 +157,12 @@ def get_all_exercises():
     rows = cursor.fetchall()
     result = []
     for row in rows:
-        result.append({
-            "id": row[0],
-            "name": row[1],
-            "difficulty": row[2],
-            "equipment": row[3]
-        })
+        result.append({"id": row[0], "name": row[1], "difficulty": row[2], "equipment": row[3]})
     return jsonify({"status": "success", "exercises": result}), 200
 
 @app.route('/save_custom_workout', methods=['POST'])
 def save_custom_workout():
-    data = request.json
+    data = request.get_json(force=True, silent=True) or {}
     user_id = data.get('user_id')
     title = data.get('title')
     exercises = data.get('exercises')
@@ -218,11 +200,7 @@ def get_custom_workouts():
     rows = cursor.fetchall()
     result = []
     for row in rows:
-        result.append({
-            "id": row[0],
-            "title": row[1],
-            "exercise_count": row[2]
-        })
+        result.append({"id": row[0], "title": row[1], "exercise_count": row[2]})
     return jsonify({"status": "success", "workouts": result}), 200
 
 @app.route('/custom_workout_exercises', methods=['GET'])

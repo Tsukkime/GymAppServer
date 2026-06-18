@@ -1,4 +1,4 @@
 flask
 flask-cors
-flask-mail
 psycopg2-binary
+requests
