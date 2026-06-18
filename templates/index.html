@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GymApp — Твой персональный тренер</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -18,7 +14,6 @@
             overflow-x: hidden;
         }
 
-        /* HERO */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -55,9 +50,7 @@
             margin-bottom: 24px;
         }
 
-        .hero h1 span {
-            color: #e63946;
-        }
+        .hero h1 span { color: #e63946; }
 
         .hero p {
             font-size: clamp(1rem, 2.5vw, 1.3rem);
@@ -88,22 +81,14 @@
             box-shadow: 0 16px 48px rgba(230, 57, 70, 0.6);
         }
 
-        .btn-download svg {
-            width: 22px;
-            height: 22px;
-            fill: #fff;
-        }
+        .btn-download svg { width: 22px; height: 22px; fill: #fff; }
 
-        .badge {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: #555;
-        }
+        .badge { margin-top: 20px; font-size: 0.85rem; color: #555; }
 
         /* FEATURES */
         .features {
             padding: 100px 20px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -123,7 +108,7 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 24px;
         }
 
@@ -140,22 +125,9 @@
             transform: translateY(-4px);
         }
 
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .card p {
-            color: #777;
-            line-height: 1.7;
-            font-size: 0.95rem;
-        }
+        .card-icon { font-size: 2.5rem; margin-bottom: 20px; }
+        .card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; }
+        .card p { color: #777; line-height: 1.7; font-size: 0.95rem; }
 
         /* STATS */
         .stats {
@@ -174,40 +146,9 @@
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #e63946;
-        }
+        .stat-number { font-size: 3rem; font-weight: 900; color: #e63946; }
+        .stat-label { color: #666; margin-top: 8px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .stat-label {
-            color: #666;
-            margin-top: 8px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* CTA */
-        .cta {
-            padding: 120px 20px;
-            text-align: center;
-            background: radial-gradient(ellipse at bottom, #1a0a0a 0%, #0f0f0f 70%);
-        }
-
-        .cta h2 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            margin-bottom: 24px;
-        }
-
-        .cta p {
-            color: #777;
-            margin-bottom: 48px;
-            font-size: 1.05rem;
-        }
-
-        /* FOOTER */
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -222,14 +163,14 @@
 <section class="hero">
     <div class="logo">GymApp</div>
     <h1>Тренируйся<br><span>умнее</span></h1>
-    <p>Готовые программы для дома и зала, конструктор своих тренировок и контроль физической формы — всё в одном приложении.</p>
+    <p>Готовые программы для дома и зала, конструктор своих тренировок, ИИ-тренер и контроль физической формы — всё в одном приложении.</p>
     <a class="btn-download" href="/download">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/>
         </svg>
         Скачать для Android
     </a>
-    <div class="badge">APK · Android 6.0+</div>
+    <div class="badge">APK · Android 8.0+</div>
 </section>
 
 <section class="features">
@@ -247,9 +188,24 @@
             <p>Профессиональные программы с тренажёрами и свободными весами для максимального результата.</p>
         </div>
         <div class="card">
+            <div class="card-icon">🏃</div>
+            <h3>Кардио</h3>
+            <p>Программы для выносливости и сжигания жира — бег, прыжки, интервальные тренировки.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🧘</div>
+            <h3>Растяжка и гибкость</h3>
+            <p>Комплексы для восстановления мышц, улучшения гибкости и снятия напряжения после тренировок.</p>
+        </div>
+        <div class="card">
             <div class="card-icon">✏️</div>
             <h3>Свои тренировки</h3>
-            <p>Составляй собственные программы из базы упражнений. Задавай подходы и повторения.</p>
+            <p>Составляй собственные программы из базы упражнений. Задавай подходы и повторения под себя.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🤖</div>
+            <h3>ИИ-тренер</h3>
+            <p>Задай вопрос про питание или упражнения — ИИ помнит всю вашу переписку и даёт персональные советы.</p>
         </div>
         <div class="card">
             <div class="card-icon">📊</div>
@@ -259,12 +215,12 @@
         <div class="card">
             <div class="card-icon">💡</div>
             <h3>Советы к упражнениям</h3>
-            <p>Каждое упражнение содержит подсказку по технике выполнения — меньше травм, больше прогресса.</p>
+            <p>Каждое упражнение содержит подсказку по технике — меньше травм, больше прогресса.</p>
         </div>
         <div class="card">
             <div class="card-icon">🔐</div>
             <h3>Личный аккаунт</h3>
-            <p>Регистрация с подтверждением на email. Твои данные и тренировки сохраняются в облаке.</p>
+            <p>Регистрация с подтверждением на email. Данные и тренировки сохраняются в облаке.</p>
         </div>
     </div>
 </section>
@@ -272,7 +228,7 @@
 <section class="stats">
     <div class="stats-inner">
         <div>
-            <div class="stat-number">2</div>
+            <div class="stat-number">4</div>
             <div class="stat-label">Вида тренировок</div>
         </div>
         <div>
@@ -280,21 +236,10 @@
             <div class="stat-label">Своих программ</div>
         </div>
         <div>
-            <div class="stat-number">0₽</div>
-            <div class="stat-label">Бесплатно</div>
+            <div class="stat-number">AI</div>
+            <div class="stat-label">Персональный тренер</div>
         </div>
     </div>
-</section>
-
-<section class="cta">
-    <h2>Готов начать?</h2>
-    <p>Скачай приложение и начни первую тренировку сегодня</p>
-    <a class="btn-download" href="/download">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/>
-        </svg>
-        Скачать APK
-    </a>
 </section>
 
 <footer>
