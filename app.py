@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from flask_mail import Mail, Message
 import psycopg2
 import random
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -189,7 +190,14 @@ def save_custom_workout():
 def get_custom_workouts():
     user_id = request.args.get('user_id')
     cursor.execute(
-        "SELECT id, title, created_at FROM custom_workouts WHERE user_id=%s ORDER BY created_at DESC",
+        """
+        SELECT cw.id, cw.title, COUNT(cwe.id) as exercise_count
+        FROM custom_workouts cw
+        LEFT JOIN custom_workout_exercises cwe ON cw.id = cwe.custom_workout_id
+        WHERE cw.user_id = %s
+        GROUP BY cw.id, cw.title
+        ORDER BY cw.id DESC
+        """,
         (user_id,)
     )
     rows = cursor.fetchall()
@@ -198,7 +206,7 @@ def get_custom_workouts():
         result.append({
             "id": row[0],
             "title": row[1],
-            "created_at": str(row[2])
+            "exercise_count": row[2]
         })
     return jsonify({"status": "success", "workouts": result}), 200
 
@@ -225,5 +233,14 @@ def get_custom_workout_exercises():
         })
     return jsonify({"status": "success", "exercises": result}), 200
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/download')
+def download_apk():
+    apk_dir = os.path.join(os.path.dirname(__file__), 'static')
+    return send_from_directory(apk_dir, 'app-debug.apk', as_attachment=True)
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="localhost", port=1234, debug=True)

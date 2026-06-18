@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymApp — Твой персональный тренер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f0f 70%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #e63946;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: #e63946;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: #aaa;
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #e63946;
+            color: #fff;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 32px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(230, 57, 70, 0.6);
+        }
+
+        .btn-download svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff;
+        }
+
+        .badge {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        /* FEATURES */
+        .features {
+            padding: 100px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: #666;
+            margin-bottom: 64px;
+            font-size: 1rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: #161616;
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 36px 28px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .card:hover {
+            border-color: #e63946;
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #777;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* STATS */
+        .stats {
+            background: #161616;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+            padding: 60px 20px;
+        }
+
+        .stats-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #e63946;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 120px 20px;
+            text-align: center;
+            background: radial-gradient(ellipse at bottom, #1a0a0a 0%, #0f0f0f 70%);
+        }
+
+        .cta h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 24px;
+        }
+
+        .cta p {
+            color: #777;
+            margin-bottom: 48px;
+            font-size: 1.05rem;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #333;
+            font-size: 0.85rem;
+            border-top: 1px solid #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <div class="logo">GymApp</div>
+    <h1>Тренируйся<br><span>умнее</span></h1>
+    <p>Готовые программы для дома и зала, конструктор своих тренировок и контроль физической формы — всё в одном приложении.</p>
+    <a class="btn-download" href="/download">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/>
+        </svg>
+        Скачать для Android
+    </a>
+    <div class="badge">APK · Android 6.0+</div>
+</section>
+
+<section class="features">
+    <h2 class="section-title">Всё что нужно для прогресса</h2>
+    <p class="section-sub">Никаких лишних кнопок — только тренировки</p>
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">🏠</div>
+            <h3>Тренировки дома</h3>
+            <p>Готовые программы без инвентаря. Качайся где угодно — дома, в парке, в командировке.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🏋️</div>
+            <h3>Тренировки в зале</h3>
+            <p>Профессиональные программы с тренажёрами и свободными весами для максимального результата.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">✏️</div>
+            <h3>Свои тренировки</h3>
+            <p>Составляй собственные программы из базы упражнений. Задавай подходы и повторения.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Контроль формы</h3>
+            <p>Введи рост и вес — приложение рассчитает ИМТ и подскажет твою категорию.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">💡</div>
+            <h3>Советы к упражнениям</h3>
+            <p>Каждое упражнение содержит подсказку по технике выполнения — меньше травм, больше прогресса.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔐</div>
+            <h3>Личный аккаунт</h3>
+            <p>Регистрация с подтверждением на email. Твои данные и тренировки сохраняются в облаке.</p>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="stats-inner">
+        <div>
+            <div class="stat-number">2</div>
+            <div class="stat-label">Вида тренировок</div>
+        </div>
+        <div>
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Своих программ</div>
+        </div>
+        <div>
+            <div class="stat-number">0₽</div>
+            <div class="stat-label">Бесплатно</div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Готов начать?</h2>
+    <p>Скачай приложение и начни первую тренировку сегодня</p>
+    <a class="btn-download" href="/download">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9v2h14v-2H5z"/>
+        </svg>
+        Скачать APK
+    </a>
+</section>
+
+<footer>
+    © 2025 GymApp. Сделано с ❤️
+</footer>
+
+</body>
+</html>
